@@ -1,6 +1,5 @@
 import React from "react";
 import "./App.css";
-import Button from "@mui/material/Button";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import NavBar from "./pages/NavBar";
 import Home from "./pages/Home";
