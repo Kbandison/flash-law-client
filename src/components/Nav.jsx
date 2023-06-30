@@ -13,8 +13,11 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import BoltIcon from "@mui/icons-material/Bolt";
+import { logout } from "../features/auth/authSlice";
+
+//////////////////////////////LOOK INTO RESPONSIVENESS OF NAVBAR////////////////////////////////////
 
 const pages = [
   { text: "Home", href: "/" },
@@ -31,10 +34,11 @@ const settings = [
 
 function ResponsiveAppBar() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.auth.user);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -85,6 +89,7 @@ function ResponsiveAppBar() {
                 mr: 1,
                 width: "10%",
                 height: "10%",
+                color: "rgb(255, 255, 255)",
               }}
             />
             <Typography
@@ -97,22 +102,28 @@ function ResponsiveAppBar() {
                 // fontFamily: "monospace",
                 fontWeight: 700,
                 // letterSpacing: ".3rem",
-                color: "inherit",
                 textDecoration: "none",
+                color: "text.primary",
               }}
             >
               Flash-Law
             </Typography>
           </Box>
 
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "flex", md: "none" },
+            }}
+          >
             <IconButton
               size="large"
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
-              color="inherit"
+              color="text.primary"
+              // color="#0F0B06"
             >
               <MenuIcon />
             </IconButton>
@@ -141,12 +152,20 @@ function ResponsiveAppBar() {
               ))}
             </Menu>
           </Box>
-          <BoltIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
+          <BoltIcon
+            sx={{
+              display: { xs: "flex", md: "none" },
+              mr: 1,
+              width: "5%",
+              height: "5%",
+              color: "rgba(255,255,255)",
+            }}
+          />
           <Typography
             variant="h5"
             noWrap
             component="a"
-            href=""
+            href="/"
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -154,8 +173,8 @@ function ResponsiveAppBar() {
               fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: ".3rem",
-              color: "inherit",
               textDecoration: "none",
+              color: "text.primary",
             }}
           >
             Flash-Law
@@ -172,7 +191,7 @@ function ResponsiveAppBar() {
               <Button
                 key={page}
                 onClick={() => navigate(page.href)}
-                sx={{ my: 2, color: "white", display: "block" }}
+                sx={{ my: 2, display: "block" }}
               >
                 {page.text}
               </Button>
@@ -191,7 +210,7 @@ function ResponsiveAppBar() {
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar
-                    alt={`${user.firstName} ${user.lastName}`}
+                    alt={`${user.user.firstName} ${user.user.lastName}`}
                     src="/static/images/avatar/2.jpg"
                   />
                 </IconButton>
@@ -213,7 +232,14 @@ function ResponsiveAppBar() {
                 onClose={handleCloseUserMenu}
               >
                 {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  <MenuItem
+                    key={setting}
+                    onClick={
+                      setting.text === "Logout"
+                        ? () => dispatch(logout())
+                        : handleCloseUserMenu
+                    }
+                  >
                     <Typography textAlign="center">{setting.text}</Typography>
                   </MenuItem>
                 ))}
@@ -227,8 +253,8 @@ function ResponsiveAppBar() {
                 justifyContent: "center",
               }}
             >
-              <Button variant="outlined" href="login">
-                Log In / Sign Up
+              <Button variant="contained" href="login">
+                Log In
               </Button>
             </Box>
           )}

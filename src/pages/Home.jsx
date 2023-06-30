@@ -34,13 +34,13 @@ const Home = () => {
         <Box>
           <Typography variant="h2">Welcome to Flash-Law</Typography>
         </Box>
-        <Button variant="outlined" href="login">
+        <Button variant="contained" href="login">
           Login
         </Button>
-        <Button variant="outlined" href="register">
+        <Button variant="contained" href="register">
           Sign Up
         </Button>
-        <Button variant="outlined" href="find-attorney">
+        <Button variant="contained" href="find-attorney">
           Find an Attorney
         </Button>
       </Container>

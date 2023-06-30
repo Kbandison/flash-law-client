@@ -12,6 +12,10 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { register, reset } from "../features/auth/authSlice";
+import { useState, useEffect } from "react";
 
 function Copyright(props) {
   return (
@@ -36,6 +40,43 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function Register() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
+  const [registerMessage, setRegisterMessage] = React.useState("");
+  const [registerData, setRegisterData] = React.useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  React.useEffect(() => {
+    if (isError) {
+      setRegisterMessage(message);
+      console.log(message);
+    }
+
+    if (isSuccess || user) {
+      navigate("/");
+    }
+  }, [user, isError, isSuccess, message, registerData, navigate]);
+
+  const handleChange = (event) => {
+    // CONSIDER TEXT FORMATTING FOR PHONE NUMBER, EMAIL, AND NAME
+
+    setRegisterData({
+      ...registerData,
+      [event.target.name]: event.target.value,
+    });
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -43,6 +84,8 @@ export default function Register() {
       email: data.get("email"),
       password: data.get("password"),
     });
+
+    dispatch(register(registerData));
   };
 
   return (
@@ -72,6 +115,8 @@ export default function Register() {
                 id="firstName"
                 label="First Name"
                 autoFocus
+                value={registerData.firstName}
+                onChange={handleChange}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -82,9 +127,11 @@ export default function Register() {
                 label="Last Name"
                 name="lastName"
                 autoComplete="family-name"
+                value={registerData.lastName}
+                onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 required
                 fullWidth
@@ -92,6 +139,20 @@ export default function Register() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                value={registerData.email}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                required
+                fullWidth
+                id="phoneNumber"
+                label="Phone Number"
+                name="phoneNumber"
+                autoComplete="phone-number"
+                value={registerData.phoneNumber}
+                onChange={handleChange}
               />
             </Grid>
             <Grid item xs={12}>
@@ -103,6 +164,21 @@ export default function Register() {
                 type="password"
                 id="password"
                 autoComplete="new-password"
+                value={registerData.password}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                name="confirmPassword"
+                label="Confirm Password"
+                type="password"
+                id="confirmPassword"
+                autoComplete="new-password"
+                value={registerData.confirmPassword}
+                onChange={handleChange}
               />
             </Grid>
             <Grid item xs={12}>

@@ -1,7 +1,6 @@
 import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
@@ -12,6 +11,10 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { login, reset } from "../features/auth/authSlice";
+// import { useState, useEffect } from "react";
 
 function Copyright(props) {
   return (
@@ -31,11 +34,46 @@ function Copyright(props) {
   );
 }
 
-// TODO remove, this demo shouldn't need to reset the theme.
-
-const defaultTheme = createTheme();
-
 export default function Login() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
+  const [loginMessage, setLoginMessage] = React.useState("");
+  const [loginData, setloginData] = React.useState({
+    email: "",
+    password: "",
+  });
+
+  React.useEffect(() => {
+    if (isError) {
+      setLoginMessage(message);
+      console.log(message);
+    }
+
+    if (isSuccess) {
+      console.log(message);
+      console.log(loginData);
+      navigate("/");
+    }
+
+    dispatch(reset());
+  }, [isError, isSuccess, message, user, navigate, dispatch, loginData]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setloginData((register) => {
+      return {
+        ...register,
+        [name]: value,
+      };
+    });
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -43,6 +81,9 @@ export default function Login() {
       email: data.get("email"),
       password: data.get("password"),
     });
+    console.log("loginButton", loginData);
+    // setIsLoggedIn(true);
+    dispatch(login(loginData));
   };
 
   return (
@@ -71,6 +112,8 @@ export default function Login() {
             name="email"
             autoComplete="email"
             autoFocus
+            value={loginData.email}
+            onChange={handleChange}
           />
           <TextField
             margin="normal"
@@ -81,9 +124,11 @@ export default function Login() {
             type="password"
             id="password"
             autoComplete="current-password"
+            value={loginData.password}
+            onChange={handleChange}
           />
           <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
+            control={<Checkbox value="remember" />}
             label="Remember me"
           />
           <Button
