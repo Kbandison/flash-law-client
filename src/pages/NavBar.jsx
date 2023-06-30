@@ -3,7 +3,7 @@ import Nav from "../components/Nav";
 
 const NavBar = () => {
   return (
-    <div>
+    <div className="screen">
       <Nav />
       <Outlet />
     </div>

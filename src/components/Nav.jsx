@@ -12,22 +12,29 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
-import { BorderAllRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import BoltIcon from "@mui/icons-material/Bolt";
 
-// const pages = ["Home", "Find An Attorney", "Contact Us", "About Us"];
 const pages = [
   { text: "Home", href: "/" },
   { text: "Find An Attorney", href: "/find-attorney" },
   { text: "Contact Us" },
   { text: "About Us" },
 ];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const settings = [
+  // { text: "Profile" },
+  { text: "Account", href: "/account" },
+  // { text: "Dashboard" },
+  { text: "Logout" },
+];
 
 function ResponsiveAppBar() {
   const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  const user = useSelector((state) => state.user);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -45,26 +52,58 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar
+      position="relative"
+      sx={{
+        // border: 1,
+        boxShadow: "none",
+        background: 0,
+        py: 2,
+      }}
+    >
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="/"
+        <Toolbar
+          disableGutters
+          sx={{
+            // border: 1,
+            justifyContent: "space-between",
+            alignItems: "space-between",
+          }}
+        >
+          <Box
             sx={{
               display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
-              fontWeight: 700,
-              // letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
+              // border: 1,
+              flexGrow: 0,
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            Flash-Law
-          </Typography>
+            <BoltIcon
+              sx={{
+                display: { xs: "none", md: "flex" },
+                mr: 1,
+                width: "10%",
+                height: "10%",
+              }}
+            />
+            <Typography
+              variant="h5"
+              noWrap
+              component="a"
+              href="/"
+              sx={{
+                display: { xs: "none", md: "flex" },
+                // fontFamily: "monospace",
+                fontWeight: 700,
+                // letterSpacing: ".3rem",
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              Flash-Law
+            </Typography>
+          </Box>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
@@ -102,7 +141,7 @@ function ResponsiveAppBar() {
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
+          <BoltIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
           <Typography
             variant="h5"
             noWrap
@@ -124,6 +163,7 @@ function ResponsiveAppBar() {
           <Box
             sx={{
               flexGrow: 1,
+              // border: 1,
               display: { xs: "none", md: "flex" },
               justifyContent: "center",
             }}
@@ -139,35 +179,59 @@ function ResponsiveAppBar() {
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
+          {user ? (
+            <Box
+              sx={{
+                flexGrow: { xs: 0, md: 1 },
+                // border: 1,
+                display: "flex",
+                justifyContent: "center",
               }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar
+                    alt={`${user.firstName} ${user.lastName}`}
+                    src="/static/images/avatar/2.jpg"
+                  />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: "45px" }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {settings.map((setting) => (
+                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center">{setting.text}</Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
+          ) : (
+            <Box
+              sx={{
+                flexGrow: { xs: 0, md: 1 },
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <Button variant="outlined" href="login">
+                Log In / Sign Up
+              </Button>
+            </Box>
+          )}
         </Toolbar>
       </Container>
     </AppBar>
